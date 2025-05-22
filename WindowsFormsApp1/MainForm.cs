@@ -32,7 +32,7 @@ namespace TableEditor
         {
             var openDialog = new OpenFileDialog
             {
-                ilter = "XML файлы (*.xml)|*.xml|Все файлы (*.*)|*.*",
+                Filter = "XML файлы (*.xml)|*.xml|Все файлы (*.*)|*.*",
                 Title = "Открыть таблицу"
             };
 
