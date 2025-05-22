@@ -43,8 +43,34 @@ namespace TableEditor
 
             dataGridView.DataSource = _dataTable;
             dataGridView.AllowUserToAddRows = true;
+            dataGridView.DefaultValuesNeeded += DataGridView_DefaultValuesNeeded;
         }
 
+        private int GetNextId()
+        {
+            if (_dataTable.Rows.Count == 0)
+                return 1;
+
+            // Находим максимальное значение ID в существующих строках
+            int maxId = 0;
+            foreach (DataRow row in _dataTable.Rows)
+            {
+                if (row["ID"] != DBNull.Value)
+                {
+                    int currentId = Convert.ToInt32(row["ID"]);
+                    maxId = Math.Max(maxId, currentId);
+                }
+            }
+
+            return maxId + 1;
+        }
+        private void DataGridView_DefaultValuesNeeded(object sender, DataGridViewRowEventArgs e)
+        {
+            // Устанавливаем ID для новой строки
+            if (_dataTable.Columns.Contains("ID"))
+                e.Row.Cells["ID"].Value = GetNextId();
+        }
+        
         public void LoadTable(string filePath)
         {
             try
@@ -92,9 +118,9 @@ namespace TableEditor
         {
             var saveDialog = new SaveFileDialog
             {
-                Filter = "Таблицы (*.table)|*.table|Все файлы (*.*)|*.*",
+                Filter = "XML файлы (*.xml)|*.xml|Все файлы (*.*)|*.*",
                 Title = "Сохранить таблицу",
-                DefaultExt = "table"
+                DefaultExt = "xml"
             };
 
             if (saveDialog.ShowDialog() == DialogResult.OK)
